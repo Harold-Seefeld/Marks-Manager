@@ -1,5 +1,14 @@
 {
-  "name": "Franchise Manager",
+  "name": "FranchiseManager",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "dependencies":
+  {
+    "express": "~4.9.0",
+    "body-parser": "~1.8.1",
+    "socket.io":"~1.0.0",
+    "mysql" : "*",
+    "node-uuid":"~1.4.2",
+    "crypto":"*"
+  }
 }
