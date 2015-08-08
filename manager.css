@@ -1,0 +1,52 @@
+body {
+    background: url('images/background.png');
+}
+
+/* The side bar */
+.side {
+    color: white;
+    position:absolute;
+    width: 19% !important;
+    height: 90% !important;
+    top: 9%;
+    bottom: 1%;
+    left: 1%;
+    background: #2B2B2B;
+    outline: 4px solid black;
+    overflow: auto;
+}
+
+.side p {
+    margin-left: 5%;
+}
+
+.content {
+    position: absolute;
+    height: 84% !important;
+    width: 78%;
+    top: 9%;
+    bottom: 1%;
+    left: 21%;
+    background: #F6F6F6;
+    outline: 4px solid black;
+    overflow: auto;
+}
+
+.footer {
+    color: white;
+    position: absolute;
+    height: 4% !important;
+    width: 78%;
+    top: 95%;
+    left: 21%;
+    bottom: 1%;
+    background: #2B2B2B;
+    outline: 4px solid black;
+    overflow: hidden;
+}
+
+.footer p {
+    text-align: right;
+    padding-right: 2%;
+    overflow: hidden;
+}
