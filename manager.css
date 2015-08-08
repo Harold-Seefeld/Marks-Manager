@@ -2,7 +2,64 @@ body {
     background: url('images/background.png');
 }
 
-/* The side bar */
+.logo {
+    position:absolute;
+    width: 12% !important;
+    height: 6% !important;
+    top: 1%;
+    bottom: 1%;
+    left: 1%;
+    background: white;
+    outline: 4px solid black;
+    overflow: hidden;
+}
+
+.header {
+    color: white;
+    position:absolute;
+    width: 85% !important;
+    height: 6% !important;
+    top: 1%;
+    bottom: 1%;
+    left: 14%;
+    background: #2B2B2B;
+    outline: 4px solid black;
+    overflow: hidden;
+    font-size: larger;
+}
+
+.header ul {
+    list-style-type: none;
+    overflow: hidden;
+    position: absolute;
+    transform: translate(45%, 25%);
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.header ul li {
+    float: left;
+    margin: 5px 10px 5px 10px;
+}
+
+.header ul li a {
+    color: white;
+    text-decoration: none;
+    outline: 2px solid black;
+    padding: 2px;
+    background: grey;
+    transition: outline 0.5s;
+}
+
+.header ul li a:hover {
+    color: white;
+    outline: 2px solid white;
+    transition: outline 0.5s;
+}
+
+
 .side {
     color: white;
     position:absolute;
@@ -18,6 +75,17 @@ body {
 
 .side p {
     margin-left: 5%;
+    width: 90%;
+    background: grey;
+    text-align: center;
+    font-size: large;
+    outline: 2px black solid;
+    transition: outline 0.5s;
+}
+
+.side p:hover {
+    outline: 2px white solid;
+    transition: outline 0.5s;
 }
 
 .content {
@@ -46,7 +114,10 @@ body {
 }
 
 .footer p {
-    text-align: right;
-    padding-right: 2%;
     overflow: hidden;
+    position: absolute;
+    transform: translate(0, -50%);
+    top: 50%;
+    right: 2%;
+    margin: 0px;
 }
