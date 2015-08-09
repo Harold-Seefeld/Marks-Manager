@@ -27,6 +27,17 @@ connection.connect(function(err)
   }
 });
 
+connection.on('error', function(err) {
+  // Connect again
+  connection.connect(function(err)
+  {
+    if (err)
+    {
+      return;
+    }
+  });
+});
+
 // Helper functions
 function hexToString (hex)
 {

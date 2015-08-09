@@ -60,7 +60,6 @@ body {
     transition: outline 0.3s;
 }
 
-
 .side {
     color: white;
     position:absolute;
@@ -99,6 +98,30 @@ body {
     background: #F6F6F6;
     outline: 4px solid black;
     overflow: auto;
+}
+
+.content button, .content input{
+    display: inline;
+    margin: 5px;
+    outline: 2px solid black;
+}
+
+.content p, .content h1 {
+    display: inline;
+    margin: 5px;
+}
+
+.content table tr:nth-child(even) {
+    background-color: #eee;
+}
+
+.content table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+.content table th {
+    color: white;
+    background-color: black;
 }
 
 .footer {

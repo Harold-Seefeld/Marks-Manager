@@ -9,6 +9,7 @@
     "socket.io":"~1.0.0",
     "mysql" : "*",
     "node-uuid":"~1.4.2",
-    "crypto":"*"
+    "crypto":"*",
+    "path":"*"
   }
 }
