@@ -29,6 +29,13 @@ socket.on('ls', function(data) {
   pageName = "financial";
 });
 
+// Socket listener for waiting for updated financial table
+socket.on('uv', function(data) {
+  // Request the financial table again
+  socket.emit('rt', {name: "financial"});
+  pageName = "financial";
+});
+
 // Socket listener for a new table
 socket.on('nt', function(data) {
   var html = "<table>";
@@ -37,7 +44,7 @@ socket.on('nt', function(data) {
   data.forEach(function(elem) {
     html+= "<tr>";
     elem.forEach(function(info) {
-      if (!info) {
+      if (info == null) {
         html += "<th> </th>";
       } else {
         html += "<th>" + info + "</th>";

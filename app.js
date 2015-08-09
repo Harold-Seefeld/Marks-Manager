@@ -9,6 +9,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var MySQL = require('./modules/MySQLHandler');
 var path = require('path');
+var Update = require("./modules/Update");
 
 // Tracking variables
 var searchingIDs = [];
@@ -109,7 +110,7 @@ io.on('connection', function(socket){
     }
     // Set column names
     if (name == "finance") {
-      info.push(["money", "gross_income", "net_income", "expenses","invested"]);
+      info.push(["money", "gross_income", "net_income", "expenses"]);
     } else if (name == "employees") {
       info.push(["first_name", "last_name", "salary", "wage", "hours", "manager", "position", "notes"]);
     } else if (name == "notes") {
@@ -118,7 +119,7 @@ io.on('connection', function(socket){
       return;
     }
     // Query MySQL for the data
-    MySQL.connection.query("SELECT " + "? " + (Array(info[0].length).join(", ?")) + " FROM " + name + " WHERE account_id = ?" , info[0].concat([account]) , function(err,results)
+    MySQL.connection.query("SELECT " + "??" + (Array(info[0].length).join(", ??")) + " FROM `" + name + "` WHERE account_id = ?" , info[0].concat([account]) , function(err,results)
     {
       if (err) {
         // Print error for further debugging
@@ -126,8 +127,13 @@ io.on('connection', function(socket){
       }
       else
       {
-        // Push results to info array
-        info.push(results);
+        if (results && results.length > 0) {
+          // Push results to info array
+          results.forEach(function(result) {
+            // Convert to array and add it
+            info.push(Object.keys(result).map(function(k) { return result[k] }));
+          });
+        }
         // Add empty row to results
         info.push(Array(info[0].length));
         socket.emit("nt", info);
@@ -137,7 +143,13 @@ io.on('connection', function(socket){
 
   // User wants to update the financial window
   socket.on('uv', function(data) {
-
+    // Check if valid socket
+    if (searchingIDsSockets.indexOf(socket.id) == 1) {
+      return;
+    }
+    var account = searchingIDs[searchingIDsSockets.indexOf(socket.id)];
+    // Update values from updater
+    new Update().UpdateValues(socket, account);
   });
 });
 
