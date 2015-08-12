@@ -107,7 +107,7 @@ var UpdateValues = function(data) {
 // Function to request a table
 var RequestTable = function(name) {
   socket.emit('rt', {name: name});
-  tableName = name;
+  pageName = name;
 };
 
 var CreateButtons = function() {
