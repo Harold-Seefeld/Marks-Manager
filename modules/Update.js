@@ -52,11 +52,22 @@ var Update = function () {
           console.log(err + err.stack);
         } else {
           // Update client
-          socket.emit("uv", {});
+          socket.emit("uv", {table:"financial"});
         }
       });
     }, 1000);
-  }
+  };
+  this.UpdateMoney = function (socket, accountID, money) {
+    MySQL.connection.query("UPDATE finance SET `money`=? WHERE account_id = ?", [money, accountID], function (err, results) {
+      if (err) {
+        // Do nothing if error
+      }
+      else {
+        // Update client
+        socket.emit("uv", {table:"financial"});
+      }
+    });
+  };
 };
 
 module.exports = Update;

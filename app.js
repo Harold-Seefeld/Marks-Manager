@@ -135,7 +135,7 @@ io.on('connection', function(socket){
           });
         }
         // Add empty row to results
-        info.push(Array(info[0].length));
+        //info.push(Array(info[0].length));
         socket.emit("nt", info);
       }
     });
@@ -148,8 +148,17 @@ io.on('connection', function(socket){
       return;
     }
     var account = searchingIDs[searchingIDsSockets.indexOf(socket.id)];
-    // Update values from updater
-    new Update().UpdateValues(socket, account);
+    var type = data.type;
+    // Detect which values to update
+    if (type == "f_all") {
+      // Update all financial values
+      new Update().UpdateValues(socket, account);
+    } else if (type == "f_money"){
+      // Update money column of financial table
+      if (!isNaN(parseInt(data.money, 10))) {
+        new Update().UpdateMoney(socket, account, parseInt(data.money, 10));
+      }
+    }
   });
 });
 

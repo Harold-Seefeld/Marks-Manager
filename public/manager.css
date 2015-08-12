@@ -111,17 +111,23 @@ body {
     margin: 5px;
 }
 
+.content table {
+    outline: 5px black solid;
+    margin: 8px;
+    text-transform: capitalize;
+}
+
 .content table tr:nth-child(even) {
-    background-color: #eee;
+    background-color: grey;
 }
 
 .content table tr:nth-child(odd) {
-    background-color: #fff;
+    background-color: lightgray;
+    color: black
 }
 
-.content table th {
-    color: white;
-    background-color: black;
+.content th {
+    padding: 4px;
 }
 
 .footer {

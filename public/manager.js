@@ -29,25 +29,23 @@ socket.on('ls', function(data) {
   pageName = "financial";
 });
 
-// Socket listener for waiting for updated financial table
+// Socket listener for updates to tables
 socket.on('uv', function(data) {
-  // Request the financial table again
-  socket.emit('rt', {name: "financial"});
-  pageName = "financial";
+  // Request the updated table
+  socket.emit('rt', {name: data.table});
+  pageName = data.table;
 });
 
 // Socket listener for a new table
 socket.on('nt', function(data) {
   var html = "<table>";
-  //JSON.parse(data);
-  console.log(data);
   data.forEach(function(elem) {
     html+= "<tr>";
     elem.forEach(function(info) {
       if (info == null) {
         html += "<th> </th>";
       } else {
-        html += "<th>" + info + "</th>";
+        html += "<th>" + info.toString().replace("_", " ") + "</th>";
       }
     });
     html += "</tr>";
@@ -101,14 +99,21 @@ var SignIn = function() {
 };
 
 // Update Values, updates values for the financial
-var UpdateValues = function() {
-  socket.emit("uv", {});
+var UpdateValues = function(data) {
+  // Data contains the type of update and any other necessary values
+  socket.emit("uv", data);
+};
+
+// Function to request a table
+var RequestTable = function(name) {
+  socket.emit('rt', {name: name});
+  tableName = name;
 };
 
 var CreateButtons = function() {
   if (pageName == "financial") {
-    content.innerHTML += "<button onclick='UpdateValues()'>Update Values</button><br>";
-    content.innerHTML += '<p>Money:</p><input type="number" id="money" value="1000">';
-    content.innerHTML += "<button onclick='UpdateMoney()'>Update Money</button>";
+    content.innerHTML += "<button onclick='UpdateValues({type: \"f_all\"})'>Update Values</button><br>";
+    content.innerHTML += "<button onclick='UpdateValues({type: \"f_money\", money: document.getElementById(\"money\").value})'>Update Money</button>";
+    content.innerHTML += '<input type="number" id="money" value="1000">';
   }
 };
