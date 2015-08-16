@@ -95,7 +95,7 @@ io.on('connection', function(socket){
   socket.on('rt', function(data) {
     console.log("Requested table: " + data.name);
     // Check if valid socket
-    if (searchingIDsSockets.indexOf(socket.id) == 1) {
+    if (searchingIDsSockets.indexOf(socket.id) < 0) {
       return;
     }
     // Declare variables
@@ -103,7 +103,7 @@ io.on('connection', function(socket){
     var account = searchingIDs[searchingIDsSockets.indexOf(socket.id)];
     var info = [];
     // Check if valid table name
-    if (validTables.indexOf(name) == -1) {
+    if (validTables.indexOf(name) < 0) {
       return
     } else {
       name = tableNames[validTables.indexOf(name)];
@@ -112,7 +112,13 @@ io.on('connection', function(socket){
     if (name == "finance") {
       info.push(["money", "gross_income", "net_income", "expenses"]);
     } else if (name == "employees") {
-      info.push(["first_name", "last_name", "salary", "wage", "hours", "manager", "position", "notes"]);
+      info.push(["employee_id", "first_name", "last_name", "salary", "wage", "hours", "manager", "position", "notes"]);
+    } else if (name == "managers") {
+      info.push(["manager_id", "first_name", "last_name", "position", "notes"]);
+    } else if (name == "branches") {
+      info.push(["branch_id", "name", "manager", "location"]);
+    } else if (name == "products") {
+      info.push(["product_id", "name", "price", "units_sold", "cost", "initial_stock"]);
     } else if (name == "notes") {
       info.push(["note_id", "note"]);
     } else {
@@ -144,7 +150,7 @@ io.on('connection', function(socket){
   // User wants to update the financial window
   socket.on('uv', function(data) {
     // Check if valid socket
-    if (searchingIDsSockets.indexOf(socket.id) == 1) {
+    if (searchingIDsSockets.indexOf(socket.id) < 0) {
       return;
     }
     var account = searchingIDs[searchingIDsSockets.indexOf(socket.id)];
@@ -158,7 +164,15 @@ io.on('connection', function(socket){
       if (!isNaN(parseInt(data.money, 10))) {
         new Update().UpdateMoney(socket, account, parseInt(data.money, 10));
       }
+    } else if (type == "e_create") {
+      // Create an employee in the employees table
+      new Update().CreateEmployee(socket, account, data);
     }
+    else if (type == "e_delete") {
+      // Delete employee ID row from employees table
+      new Update().DeleteEmployee(socket, account, parseInt(data.employeeID, 10));
+    }
+
   });
 });
 

@@ -10,7 +10,7 @@ var crypto = require('crypto'),
   password = 'ydHtxKBc42t7cM86';
 
 // Connection settings
-var connection =  mysql.createConnection(
+var connection =  mysql.createPool(
   {
     host :'sql6.freemysqlhosting.net',
     user : 'sql686273',
@@ -18,24 +18,9 @@ var connection =  mysql.createConnection(
     database : 'sql686273'
   });
 
-// Create connection
-connection.connect(function(err)
-{
-  if (err)
-  {
-    return;
-  }
-});
-
-connection.on('error', function(err) {
-  // Connect again
-  connection.connect(function(err)
-  {
-    if (err)
-    {
-      return;
-    }
-  });
+connection.getConnection(function(err, connection) {
+  // Use the connection again on error
+  connection.release();
 });
 
 // Helper functions

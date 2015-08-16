@@ -111,9 +111,33 @@ var RequestTable = function(name) {
 };
 
 var CreateButtons = function() {
+  var html = "";
   if (pageName == "financial") {
-    content.innerHTML += "<button onclick='UpdateValues({type: \"f_all\"})'>Update Values</button><br>";
-    content.innerHTML += "<button onclick='UpdateValues({type: \"f_money\", money: document.getElementById(\"money\").value})'>Update Money</button>";
-    content.innerHTML += '<input type="number" id="money" value="1000">';
+    html += "<br><table><tr><th><button onclick='UpdateValues({type: \"f_all\"})'>Update Values</button></th></tr></table><br>";
+    html += "<table><tr><th><button onclick='UpdateValues({type: \"f_money\", money: document.getElementById(\"money\").value})'>Update Money</button></th>";
+    html += '<th><input type="number" id="money" value="1000"></th></tr></table>';
+    content.innerHTML += html;
+  }
+  else if (pageName == "employees") {
+    // Create Employee Creation Inputs
+    html += '<br><table><tr><th>Employee</th><th>Values</th></th>';
+    html += '<tr><th>First Name:</th><th><input type="text" id="first_name" value=""></th></tr>';
+    html += '<tr><th>Last Name:</th><th><input type="text" id="last_name" value=""></th></tr>';
+    html += '<tr><th>Salary:</th><th><input type="number" id="salary" value=""></th></tr>';
+    html += '<tr><th>Wage:</th><th><input type="number" id="wage" value=""></th></tr>';
+    html += '<tr><th>Hours:</th><th><input type="number" id="hours" value=""></th></tr>';
+    html += '<tr><th>Manager:</th><th><input type="text" id="manager" value=""></th></tr>';
+    html += '<tr><th>Position:</th><th><input type="text" id="position" value=""></th></tr>';
+    html += '<tr><th>Notes:</th><th><input type="text" id="notes" value=""></th></tr>';
+    html += "<tr><th><button onclick='UpdateValues({type: \"e_create\", first_name: document.getElementById(\"first_name\").value, " +
+      "last_name: document.getElementById(\"last_name\").value, salary: document.getElementById(\"salary\").value, wage: document.getElementById(\"wage\").value, " +
+      "hours: document.getElementById(\"hours\").value, manager: document.getElementById(\"manager\").value, position: document.getElementById(\"position\").value, " +
+      "notes: document.getElementById(\"notes\").value})'>Create Employee</button></tr></th>";
+    html += '</table><br>';
+    content.innerHTML += html;
+    // Delete employee ID Button and Input
+    html = "<table><tr><th><button onclick='UpdateValues({type: \"e_delete\", employeeID: document.getElementById(\"deleteID\").value})'>Delete Employee ID</button></th>";
+    html += '<th><input type="number" id="deleteID" value="0"></th></tr></table>';
+    content.innerHTML += html;
   }
 };

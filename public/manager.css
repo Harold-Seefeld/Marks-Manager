@@ -118,7 +118,7 @@ body {
 }
 
 .content table tr:nth-child(even) {
-    background-color: grey;
+    background-color: whitesmoke;
 }
 
 .content table tr:nth-child(odd) {
