@@ -3,7 +3,7 @@ body {
 }
 
 .logo {
-    position:absolute;
+    position: absolute;
     width: 12% !important;
     height: 6% !important;
     top: 1%;
@@ -16,7 +16,7 @@ body {
 
 .header {
     color: white;
-    position:absolute;
+    position: absolute;
     width: 85% !important;
     height: 6% !important;
     top: 1%;
@@ -62,7 +62,7 @@ body {
 
 .side {
     color: white;
-    position:absolute;
+    position: absolute;
     width: 19% !important;
     height: 90% !important;
     top: 9%;
@@ -100,7 +100,7 @@ body {
     overflow: auto;
 }
 
-.content button, .content input{
+.content button, .content input {
     display: inline;
     margin: 5px;
     outline: 2px solid black;

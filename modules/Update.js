@@ -13,7 +13,7 @@ var Update = function () {
         // Do nothing if error
       }
       else if (results.length > 0) {
-        results.forEach(function(result) {
+        results.forEach(function (result) {
           if (result.salary) {
             totalExpenses += result.salary;
           } else if (result.wage && result.hours) {
@@ -52,7 +52,7 @@ var Update = function () {
           console.log(err + err.stack);
         } else {
           // Update client
-          socket.emit("uv", {table:"financial"});
+          socket.emit("uv", {table: "financial"});
         }
       });
     }, 1000);
@@ -64,7 +64,7 @@ var Update = function () {
       }
       else {
         // Update client
-        socket.emit("uv", {table:"financial"});
+        socket.emit("uv", {table: "financial"});
       }
     });
   };
@@ -92,14 +92,14 @@ var Update = function () {
     MySQL.connection.query("INSERT INTO employees (account_id, first_name, last_name, salary, wage, hours, manager, position, notes) " +
       "VALUES (?,?,?,?,?,?,?,?,?)"
       , [accountID, firstName, lastName, salary, wage, hours, manager, position, notes], function (err, results) {
-      if (err) {
-        // Do nothing if error
-        console.log(err + err.stack);
-      } else {
-        // Update client
-        socket.emit("uv", {table:"employees"});
-      }
-    });
+        if (err) {
+          // Do nothing if error
+          console.log(err + err.stack);
+        } else {
+          // Update client
+          socket.emit("uv", {table: "employees"});
+        }
+      });
   };
   this.DeleteEmployee = function (socket, accountID, employeeID) {
     // Check if employeeID is an integer
@@ -114,7 +114,7 @@ var Update = function () {
           console.log(err + err.stack);
         } else {
           // Update client
-          socket.emit("uv", {table:"employees"});
+          socket.emit("uv", {table: "employees"});
         }
       });
   }

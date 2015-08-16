@@ -3,32 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Brancho</title>
-    <link rel="stylesheet" type="text/css" href="manager.css" />
+    <link rel="stylesheet" type="text/css" href="manager.css"/>
 </head>
 <body>
-    <div class="logo">
-        <img src="images/logo.png" alt="Brancho" height="100%" width="100%">
-    </div>
-    <div class="header">
-        <ul>
-            <li><a href="default.asp">Home </a></li>
-            <li><a href="about.asp">Documentation</a></li>
-        </ul>
-    </div>
-    <div class="side">
-        <p onclick="RequestTable('financial')">Financial</p>
-        <p onclick="RequestTable('employees')">Employees</p>
-        <p onclick="RequestTable('managers')">Managers</p>
-        <p onclick="RequestTable('products')">Products</p>
-        <p onclick="RequestTable('branches')">Branches</p>
-        <p onclick="RequestTable('notes')">Notes</p>
-    </div>
-    <div class="content" id="content"></div>
-    <div class="footer">
-        <p>Created by Harold Seefeld</p>
-    </div>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="manager.js"></script>
+<div class="logo">
+    <img src="images/logo.png" alt="Brancho" height="100%" width="100%">
+</div>
+<div class="header">
+    <ul>
+        <li><a href="default.asp">Home </a></li>
+        <li><a href="about.asp">Documentation</a></li>
+    </ul>
+</div>
+<div class="side">
+    <p onclick="RequestTable('financial')">Financial</p>
+
+    <p onclick="RequestTable('employees')">Employees</p>
+
+    <p onclick="RequestTable('managers')">Managers</p>
+
+    <p onclick="RequestTable('products')">Products</p>
+
+    <p onclick="RequestTable('branches')">Branches</p>
+
+    <p onclick="RequestTable('notes')">Notes</p>
+</div>
+<div class="content" id="content"></div>
+<div class="footer">
+    <p>Created by Harold Seefeld</p>
+</div>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="manager.js"></script>
 </body>
 </html>

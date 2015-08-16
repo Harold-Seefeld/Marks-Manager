@@ -19,9 +19,9 @@ var searchingIDsSockets = [];
 var validTables = ["financial", "employees", "managers", "products", "branches", "notes"];
 var tableNames = ["finance", "employees", "managers", "products", "branches", "notes"];
 
-io.on('connection', function(socket){
+io.on('connection', function (socket) {
   // User wants to log in
-  socket.on('login', function(data) {
+  socket.on('login', function (data) {
     var password = data.password;
     var username = data.username;
     // Check if lengths are adequate
@@ -31,27 +31,24 @@ io.on('connection', function(socket){
     // Remove salt from encrypted string
     password += username.toLowerCase();
     // Get account with that information
-    MySQL.connection.query("SELECT * FROM accounts WHERE username = ?" , [username] , function(err,results)
-    {
+    MySQL.connection.query("SELECT * FROM accounts WHERE username = ?", [username], function (err, results) {
       if (err) {
         socket.emit("err", {error: "Invalid username or password."});
       }
-      else if (results.length > 0 && results[0].password != undefined &&  password == MySQL.decrypt(results[0].password))
-      {
+      else if (results.length > 0 && results[0].password != undefined && password == MySQL.decrypt(results[0].password)) {
         socket.emit("ls", {});
         // Add session
         searchingIDs.push(results[0].account_id);
         searchingIDsSockets.push(socket.id);
       }
-      else
-      {
+      else {
         socket.emit("err", {error: "Invalid username or password."});
       }
     });
   });
 
   // User wants to register
-  socket.on('register', function(data) {
+  socket.on('register', function (data) {
     var password = data.password;
     var username = data.username;
     // Check if lengths are adequate
@@ -61,25 +58,22 @@ io.on('connection', function(socket){
     // Encrypt password using username as salt
     password = MySQL.encrypt(password + username.toLowerCase());
     // Insert registration values into table
-    MySQL.connection.query("INSERT INTO accounts (username, password) VALUES (?, ?)", [username, password], function(error, success)
-      {
-        if (error)
-        {
-          if (error.stack) {
-            if (error.stack.indexOf("username") > -1) {
-              socket.emit("err", {error:'Username already exists!'});
-            } else {
-              socket.emit("err", {error:"error"});
-            }
+    MySQL.connection.query("INSERT INTO accounts (username, password) VALUES (?, ?)", [username, password], function (error, success) {
+      if (error) {
+        if (error.stack) {
+          if (error.stack.indexOf("username") > -1) {
+            socket.emit("err", {error: 'Username already exists!'});
           } else {
-            socket.emit("err", {error:"error"});
+            socket.emit("err", {error: "error"});
           }
+        } else {
+          socket.emit("err", {error: "error"});
         }
-        else
-        {
-          socket.emit("rs", {});
-        }
-      });
+      }
+      else {
+        socket.emit("rs", {});
+      }
+    });
   });
 
   // Socket disconnected
@@ -92,7 +86,7 @@ io.on('connection', function(socket){
   });
 
   // User wants to load a table
-  socket.on('rt', function(data) {
+  socket.on('rt', function (data) {
     console.log("Requested table: " + data.name);
     // Check if valid socket
     if (searchingIDsSockets.indexOf(socket.id) < 0) {
@@ -125,19 +119,19 @@ io.on('connection', function(socket){
       return;
     }
     // Query MySQL for the data
-    MySQL.connection.query("SELECT " + "??" + (Array(info[0].length).join(", ??")) + " FROM `" + name + "` WHERE account_id = ?" , info[0].concat([account]) , function(err,results)
-    {
+    MySQL.connection.query("SELECT " + "??" + (Array(info[0].length).join(", ??")) + " FROM `" + name + "` WHERE account_id = ?", info[0].concat([account]), function (err, results) {
       if (err) {
         // Print error for further debugging
         console.log("Error retrieving data. " + err.stack);
       }
-      else
-      {
+      else {
         if (results && results.length > 0) {
           // Push results to info array
-          results.forEach(function(result) {
+          results.forEach(function (result) {
             // Convert to array and add it
-            info.push(Object.keys(result).map(function(k) { return result[k] }));
+            info.push(Object.keys(result).map(function (k) {
+              return result[k]
+            }));
           });
         }
         // Add empty row to results
@@ -148,7 +142,7 @@ io.on('connection', function(socket){
   });
 
   // User wants to update the financial window
-  socket.on('uv', function(data) {
+  socket.on('uv', function (data) {
     // Check if valid socket
     if (searchingIDsSockets.indexOf(socket.id) < 0) {
       return;
@@ -159,7 +153,7 @@ io.on('connection', function(socket){
     if (type == "f_all") {
       // Update all financial values
       new Update().UpdateValues(socket, account);
-    } else if (type == "f_money"){
+    } else if (type == "f_money") {
       // Update money column of financial table
       if (!isNaN(parseInt(data.money, 10))) {
         new Update().UpdateMoney(socket, account, parseInt(data.money, 10));
@@ -182,11 +176,11 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '\\public\\manager.html');
 });
 
-app.use(function(req, res) {
+app.use(function (req, res) {
   res.send("Error: Not Found");
 });
 
-http.listen(80, function(){
+http.listen(80, function () {
   console.log('Manager server started on port 80.');
 });
 
