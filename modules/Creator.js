@@ -1,5 +1,5 @@
 /*
- Class contains functions for updating data for MySQL
+ Class contains functions for inserting data into the MySQL server
  */
 var MySQL = require('./MySQLHandler');
 
@@ -51,7 +51,7 @@ var Update = function () {
           // Do nothing if error
           console.log(err + err.stack);
         } else {
-          // Update client
+          // update client
           socket.emit("uv", {table: "financial"});
         }
       });
@@ -63,7 +63,7 @@ var Update = function () {
         // Do nothing if error
       }
       else {
-        // Update client
+        // update client
         socket.emit("uv", {table: "financial"});
       }
     });
@@ -96,7 +96,7 @@ var Update = function () {
           // Do nothing if error
           console.log(err + err.stack);
         } else {
-          // Update client
+          // update client
           socket.emit("uv", {table: "employees"});
         }
       });
@@ -113,7 +113,7 @@ var Update = function () {
           // Do nothing if error
           console.log(err + err.stack);
         } else {
-          // Update client
+          // update client
           socket.emit("uv", {table: "employees"});
         }
       });

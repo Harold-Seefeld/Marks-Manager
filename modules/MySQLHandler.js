@@ -2,9 +2,10 @@
  Class that handles the MySQL connection and encryption/decryption dependencies
  */
 
-// MySQL module
+// Use the MySQL module
 var mysql = require('mysql');
-// Crypto module
+
+// Cryptography settings
 var crypto = require('crypto'),
   algorithm = 'aes-256-ctr',
   password = 'ydHtxKBc42t7cM86';
@@ -12,29 +13,37 @@ var crypto = require('crypto'),
 // Connection settings
 var connection = mysql.createPool(
   {
-    host: 'sql6.freemysqlhosting.net',
-    user: 'sql686273',
-    password: 'kK7*fL8%',
-    database: 'sql686273'
-  });
+    // Openshift is the host that is hosting the app, use the environment variables from them, otherwise default to local ones
+    host: process.env.OPENSHIFT_MYSQL_DB_HOST || 'localhost',
+    port: process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
+    user: process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'manager',
+    password: process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'Keep the chicken open',
+    database: 'manager'
+  }
+);
 
 connection.getConnection(function (err, connection) {
-  // Use the connection again on error
-  connection.release();
+  // If an error occurs, recycle the connection
+  if (connection) {
+    connection.release();
+  }
 });
 
-// Helper functions
+// Convert hex to string
 function hexToString(hex) {
   var bytes = [],
     str;
+  // Loop over all characters in the hex
   for (var i = 0; i < hex.length - 1; i += 2) {
+    // Convert hex character to a character code
     bytes.push(parseInt(hex.substr(i, 2), 16));
   }
+  // Convert character codes to a string
   str = String.fromCharCode.apply(String, bytes);
   return str;
 }
 
-// Decrypt Method
+// Decryption Method
 var decrypt = function (text) {
   text = hexToString(text);
   try {
@@ -48,13 +57,12 @@ var decrypt = function (text) {
   }
 };
 
+// Encryption method
 var encrypt = function (text) {
-  //console.log("type of text : ");
-  //console.log(typeof text);
   var cipher = crypto.createCipher(algorithm, password);
-  var crypted = cipher.update(text, 'utf8', 'hex');
-  crypted += cipher.final('hex');
-  return crypted;
+  var encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
 };
 
 module.exports.connection = connection;

@@ -1,39 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Brancho</title>
-    <link rel="stylesheet" type="text/css" href="manager.css"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Marks Manager</title>
+
+    <meta name="description" content="Manager for marks!">
+    <meta name="author" content="Harold Seefeld">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
 </head>
 <body>
-<div class="logo">
-    <img src="images/logo.png" alt="Brancho" height="100%" width="100%">
+
+<div class="container-fluid">
+    <br>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>
+                Marks Manager
+            </h3>
+            <ul class="nav nav-tabs nav-justified">
+                <li>
+                    <a href="#">Home</a>
+                </li>
+                <li class="active">
+                    <a href="manager">Manager</a>
+                </li>
+                <li>
+                    <a href="help">Help</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <br>
+
+    <div id="content">
+        <div class="row">
+            <div class="col-md-4">
+
+            </div>
+            <div class="col-md-4">
+                <h4>
+                    Sign in
+                </h4>
+
+                <form role="form">
+                    <div class="form-group">
+
+                        <label for="sUsername">
+                            Username
+                        </label>
+                        <input type="text" class="form-control" id="sUsername">
+                    </div>
+                    <div class="form-group">
+
+                        <label for="sPassword">
+                            Password
+                        </label>
+                        <input type="password" class="form-control" id="sPassword">
+                    </div>
+                    <button type="button" class="btn btn-default" onclick="SignIn()">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col-md-4">
+
+            </div>
+            <div class="col-md-4">
+                <h4>
+                    Register
+                </h4>
+
+                <form role="form">
+                    <div class="form-group">
+
+                        <label for="rUsername">
+                            Username (4-15 Alphanumeric Characters)
+                        </label>
+                        <input type="text" class="form-control" id="rUsername">
+                    </div>
+                    <div class="form-group">
+
+                        <label for="rPassword">
+                            Password (6-15 Alphanumeric Characters)
+                        </label>
+                        <input type="password" class="form-control" id="rPassword">
+                    </div>
+                    <button type="button" class="btn btn-default" onclick="Register()">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="header">
-    <ul>
-        <li><a href="default.asp">Home </a></li>
-        <li><a href="about.asp">Documentation</a></li>
-    </ul>
-</div>
-<div class="side">
-    <p onclick="RequestTable('financial')">Financial</p>
 
-    <p onclick="RequestTable('employees')">Employees</p>
-
-    <p onclick="RequestTable('managers')">Managers</p>
-
-    <p onclick="RequestTable('products')">Products</p>
-
-    <p onclick="RequestTable('branches')">Branches</p>
-
-    <p onclick="RequestTable('notes')">Notes</p>
-</div>
-<div class="content" id="content"></div>
-<div class="footer">
-    <p>Created by Harold Seefeld</p>
-</div>
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="manager.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/manager.js"></script>
 </body>
 </html>
