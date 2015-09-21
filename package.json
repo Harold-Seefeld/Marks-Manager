@@ -1,5 +1,9 @@
 {
-  "name": "FranchiseManager",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "main": "app.js",
+  "name": "Mark Manager",
   "version": "0.0.1",
   "private": true,
   "dependencies":
