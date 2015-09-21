@@ -195,7 +195,7 @@ app.get('/', function (req, res) {
 });
 
 // Start the HTTP server listening on port 80
-http.listen(80, function () {
+http.listen(8080, function () {
   console.log('Manager server started on port 80.');
 });
 
