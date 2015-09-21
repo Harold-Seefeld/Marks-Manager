@@ -104,13 +104,24 @@ var UpdateValues = function (data) {
 // Function to request a table
 var RequestTable = function (name) {
   socket.emit('rt', {name: name});
-  pageName = capitalise(name);
+  pageName = Capitalise(name);
+  // Temporarily disable buttons to wait for the server to catch up
+  TimeoutButtons();
 };
 
-// Function to capitalise strings
-var capitalise = function (s)
+// Function to Capitalise strings
+var Capitalise = function (s)
 {
   return s[0].toUpperCase() + s.slice(1);
+};
+
+// Function called when a button is pressed in order to disable it so that the server can respond before another request is sent
+var TimeoutButtons = function () {
+  $('button:button').attr("disabled", true);
+  // Activate after one second again
+  setTimeout(function() {
+    $('button:button').attr("disabled", false);
+  }, 1000);
 };
 
 // Function to generate html for the create user interfaces
@@ -122,7 +133,7 @@ var Creator = function (name) {
   // Clear current creator space
   creatorSpace.innerHTML = "";
   // Set the title for the form
-  document.getElementById("tableTitle").innerHTML = "Create " + capitalise(name);
+  document.getElementById("tableTitle").innerHTML = "Create " + Capitalise(name);
   if (name == "subject") {
     // Load the html for the input form for subject creation
     creatorSpace.innerHTML = managerCreateSubject;
