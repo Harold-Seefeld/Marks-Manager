@@ -195,7 +195,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Use manager.html as the homepage
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '\\public\\manager.html');
+  res.sendFile(__dirname + '/public/manager.html');
 });
 
 // Start the HTTP server listening on port 80
