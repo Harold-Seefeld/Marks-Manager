@@ -103,25 +103,18 @@ var UpdateValues = function (data) {
 
 // Function to request a table
 var RequestTable = function (name) {
+  if (pageName == Capitalise(name)) {
+    // Don't request the same table twice to decrease server load
+    return;
+  }
   socket.emit('rt', {name: name});
   pageName = Capitalise(name);
-  // Temporarily disable buttons to wait for the server to catch up
-  TimeoutButtons();
 };
 
 // Function to Capitalise strings
 var Capitalise = function (s)
 {
   return s[0].toUpperCase() + s.slice(1);
-};
-
-// Function called when a button is pressed in order to disable it so that the server can respond before another request is sent
-var TimeoutButtons = function () {
-  $('button:button').attr("disabled", true);
-  // Activate after one second again
-  setTimeout(function() {
-    $('button:button').attr("disabled", false);
-  }, 1000);
 };
 
 // Function to generate html for the create user interfaces
@@ -150,7 +143,12 @@ var Creator = function (name) {
     if (selector.innerHTML.length < 15) {
       alert("Please create a new subject first, no subjects currently exist.");
       // Redirect the user to the subject creation screen
-      Creator("subject")
+      Creator("subject");
     }
   }
+};
+
+// Function called when a button is submitted from the creator user interfaces
+var Create = function (name) {
+
 };
