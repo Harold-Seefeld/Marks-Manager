@@ -11,6 +11,10 @@ var mysql = require('./modules/MySQLHandler');
 var path = require('path');
 var update = require("./modules/Creator");
 
+// Set port and ip variables for the server address, first trying to get values from the openshift host
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 80);
+app.set('ip', process.env.OPENSHIFT_NODEJS_IP || "localhost");
+
 // Tracking variable for sessions and their respective clients
 var sessions = {};
 
@@ -195,8 +199,8 @@ app.get('/', function (req, res) {
 });
 
 // Start the HTTP server listening on port 80
-http.listen(8080, function () {
-  console.log('Manager server started on port 80.');
+http.listen(app.get('port'), app.get('ip'), function () {
+  console.log('Manager server started on port: ' + app.get('port'));
 });
 
 module.exports = app;
