@@ -2,8 +2,11 @@
   "scripts": {
     "start": "node app.js"
   },
+  "engines": {
+    "node": ">= 4"
+  },
   "main": "app.js",
-  "name": "Mark Manager",
+  "name": "MarksManager",
   "version": "0.0.1",
   "private": true,
   "dependencies":
