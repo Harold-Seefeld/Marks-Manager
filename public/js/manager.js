@@ -14,6 +14,8 @@ var content = document.getElementById('content');
 // Cache html string values for options accessible to the client
 var managerCreateSubject = "";
 var managerCreateTask = "";
+var managerDeleteSubject = "";
+var managerDeleteTask = "";
 
 // Subjects that belong to the current client
 var subjects = [];
@@ -43,12 +45,24 @@ socket.on('ls', function (data) {
   jQuery.get('managerCreateTask.html', function(data) {
     managerCreateTask = data;
   });
+  jQuery.get('managerDeleteSubject.html', function(data) {
+    managerDeleteSubject = data;
+  });
+  jQuery.get('managerDeleteTask.html', function(data) {
+    managerDeleteTask = data;
+  });
 });
 
 // Socket listener for updates to tables
 socket.on('uv', function (data) {
   // Request the updated table
   RequestTable(data.table);
+  alert("Table updated successfully.");
+});
+
+// Socket listener for getting all available subjects
+socket.on('as', function (data) {
+  subjects = data;
 });
 
 // Socket listener for a new table
@@ -93,12 +107,6 @@ var Register = function () {
 var SignIn = function () {
   var data = {username: document.getElementById("sUsername").value, password: document.getElementById("sPassword").value};
   socket.emit('login', data);
-};
-
-// update Values, updates values for the financial
-var UpdateValues = function (data) {
-  // Data contains the type of update and any other necessary values
-  socket.emit("uv", data);
 };
 
 // Function to request a table
@@ -150,5 +158,71 @@ var Creator = function (name) {
 
 // Function called when a button is submitted from the creator user interfaces
 var Create = function (name) {
+  pageName = "Create " + name;
+  var data = {};
+  if (name == "subject") {
+    data.type = "c_subject";
+    data.name = $("#subjectName").val();
+    socket.emit("uv", data);
+  }
+  else if (name == "task") {
+    data.type = "c_task";
+    data.subject = $("#subjectSelector").val();
+    data.name = $("#tName").val();
+    data.mark = $("#tMark").val();
+    data.weighting = $("#tWeighting").val();
+    socket.emit("uv", data);
+  }
+};
 
+var Deleter = function(name) {
+  pageName = "Delete " + name;
+  // Clear table html
+  document.getElementById("table").innerHTML = "";
+  // Get creator content space and set it to a variable
+  var creatorSpace = document.getElementById("creator");
+  // Clear current creator space
+  creatorSpace.innerHTML = "";
+  // Set the title for the form
+  document.getElementById("tableTitle").innerHTML = "Delete " + Capitalise(name);
+  if (name == "subject") {
+    // Load the html for the input form for subject creation
+    creatorSpace.innerHTML = managerDeleteSubject;
+    // Show available subjects that can be deleted in a combobox
+    var selector = document.getElementById("subjectSelector");
+    for (var i = 0; i < subjects.length; i++) {
+      selector.innerHTML += "<option>" + subjects[i] + "</option>";
+    }
+  }
+  else if (name == "task") {
+    // Load the html for the input form for task creation
+    creatorSpace.innerHTML = managerDeleteTask;
+    // Get the combobox for the subjects and fill it
+    var selector = document.getElementById("subjectSelector");
+    for (var i = 0; i < subjects.length; i++) {
+      selector.innerHTML += "<option>" + subjects[i] + "</option>";
+    }
+    // If there are no subjects available, indicate that one needs to be created
+    if (selector.innerHTML.length < 15) {
+      alert("Please create a new subject first, no subjects currently exist.");
+      // Redirect the user to the subject creation screen
+      Creator("subject");
+    }
+  }
+};
+
+// Function called when a button is submitted from the deleter user interfaces
+var Delete = function (name) {
+  var data = {};
+  if (name == "subject") {
+    data.type = "d_subject";
+    data.name = $("#subjectSelector").val();
+    socket.emit("uv", data);
+  }
+  else if (name == "task") {
+    data.type = "d_task";
+    data.subject = $("#subjectSelector").val();
+    data.name = $("#tName").val();
+    socket.emit("uv", data);
+  }
 };

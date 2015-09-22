@@ -9,7 +9,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var mysql = require('./modules/MySQLHandler');
 var path = require('path');
-var update = require("./modules/Creator");
+var creator = require("./modules/Updater");
 
 // Set port and ip variables for the server address, first trying to get values from the openshift host
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 80);
@@ -41,6 +41,16 @@ io.on('connection', function (socket) {
         socket.emit("ls", {});
         // Add session and account id to the tracking variable
         sessions[socket.id] = results[0].account_id;
+        // Send users subjects
+        mysql.connection.query("SELECT name FROM subjects WHERE account_id = ?", [results[0].account_id], function (err, results) {
+          // Add all subjects to an array
+          var subjects = [];
+          for (var i = 0; i < results.length; i++) {
+            subjects.push(results[i].name);
+          }
+          // Emit the subjects array to the client
+          socket.emit("as", subjects)
+        });
       }
       else {
         socket.emit("err", {error: "Invalid username or password."});
@@ -82,7 +92,7 @@ io.on('connection', function (socket) {
   // Event called when a client disconnects
   socket.on('disconnect', function () {
     // Delete socket and id pair from the server if they are authenticated
-    if (sessions.hasOwnProperty(sessions)) {
+    if (sessions.hasOwnProperty(socket.id)) {
       delete sessions[socket.id];
     }
   });
@@ -124,12 +134,20 @@ io.on('connection', function (socket) {
       // Make sure there is at least one row, an error isn't thrown when nothing comes back
       if (results && results.length > 0) {
         // Get the name of the table selected
-        var name = getName();
+        var type = getName();
         // If the client is trying to view the subjects table send the name, number of tasks, final mark and course completion percentage
-        if (name == "subjects") {
-          // Loop over all the found subjects for the account
+        if (type == "subjects") {
+          // Add all subjects to an array
+          var subjects = [];
           for (var i = 0; i < results.length; i++) {
-            var name = results[0].name;
+            subjects.push(results[i].name);
+          }
+          // Emit the subjects array to the client
+          socket.emit("as", subjects);
+          // Loop over all the found subjects for the account
+          results.forEach(function(result) {
+            // Set the task name
+            var name = result.name;
             // Get all tasks for the subject from the same account
             mysql.connection.query("SELECT * FROM tasks WHERE account_id = ? AND subject = ?", [account, name], function (err, results) {
               if (results && results.length > 0) {
@@ -144,18 +162,29 @@ io.on('connection', function (socket) {
                 for (var n = 0; n < results.length; n++) {
                   finalMark += results[n].mark * (results[n].weighting / courseCompletion);
                 }
+                // Round final mark to 1 decimal place
+                finalMark = Math.round(finalMark * 10) / 10;
                 // Add the values to the dataToSend array
                 dataToSend = [name, taskCount, finalMark, courseCompletion];
                 socket.emit("ne", dataToSend);
               } else {
-                // No tasks under this subject so far, send 0 as values
+                // No tasks under this subject so far, send 0 as values for the subject name
                 dataToSend = [name, 0, 0, 0];
                 socket.emit("ne", dataToSend);
               }
             });
-          }
-        } else if (name == "tasks") {
-
+          });
+        } else if (type == "tasks") {
+          // Loop over all the found tasks for the account
+          results.forEach(function(result) {
+            var subject = result.subject;
+            var name = result.name;
+            var mark = result.mark;
+            var weighting = result.weighting;
+            // Add the values to the dataToSend array
+            dataToSend = [subject, name, mark, weighting];
+            socket.emit("ne", dataToSend);
+          });
         }
       }
     });
@@ -170,22 +199,20 @@ io.on('connection', function (socket) {
     var account = sessions[socket.id];
     // Type of operation that the client wants to perform
     var type = data.type;
-    // Choose what the user wants to update
+    // Choose what the user wants to creator
     if (type == "c_subject") {
-      // update all financial values
-      new update().UpdateValues(socket, account);
+      // Add the subject passing the name variable
+      creator.AddSubject(socket, account, data.name.toString().trim());
     } else if (type == "c_task") {
-      // update money column of financial table
-      if (!isNaN(parseInt(data.money, 10))) {
-        new update().UpdateMoney(socket, account, parseInt(data.money, 10));
-      }
+      // Add the task passing the subject, name, mark and weighting
+      creator.AddTask(socket, account, data.subject.toString().trim(), data.name.toString().trim(), data.mark, data.weighting);
     } else if (type == "d_subject") {
-      // Create an employee in the employees table
-      new update().CreateEmployee(socket, account, data);
+      // Delete the subject and all tasks linked to it
+      creator.DeleteSubject(socket, account, data.name);
     }
     else if (type == "d_task") {
-      // Delete employee ID row from employees table
-      new update().DeleteEmployee(socket, account, parseInt(data.employeeID, 10));
+      // Delete the task from the task table
+      creator.DeleteTask(socket, account, data.subject, data.name);
     }
   });
 });
