@@ -5,17 +5,37 @@
 // Create socket and connect
 var socket = io.connect();
 
-// Active page
+// Active table page
 var pageName = "";
 
 // Get and set main content area
 var content = document.getElementById('content');
 
 // Cache html string values for options accessible to the client
+var managerSigned = "";
 var managerCreateSubject = "";
 var managerCreateTask = "";
 var managerDeleteSubject = "";
 var managerDeleteTask = "";
+
+// Store the html used for after signing in
+jQuery.get('resources/managerSigned.html', function(data) {
+  managerSigned = data;
+});
+
+// Store and download the other options
+jQuery.get('resources/managerCreateSubject.html', function(data) {
+  managerCreateSubject = data;
+});
+jQuery.get('resources/managerCreateTask.html', function(data) {
+  managerCreateTask = data;
+});
+jQuery.get('resources/managerDeleteSubject.html', function(data) {
+  managerDeleteSubject = data;
+});
+jQuery.get('resources/managerDeleteTask.html', function(data) {
+  managerDeleteTask = data;
+});
 
 // Subjects that belong to the current client
 var subjects = [];
@@ -32,25 +52,12 @@ socket.on('rs', function (data) {
 
 // Socket listener for signing in
 socket.on('ls', function (data) {
-  // Load the html used for the manager after a successful sign in has been performed
-  jQuery.get('managerSigned.html', function(data) {
-    content.innerHTML = data;
-    // Request the subjects table upon login
-    RequestTable("subjects");
-  });
-  // Store and download the other options
-  jQuery.get('managerCreateSubject.html', function(data) {
-    managerCreateSubject = data;
-  });
-  jQuery.get('managerCreateTask.html', function(data) {
-    managerCreateTask = data;
-  });
-  jQuery.get('managerDeleteSubject.html', function(data) {
-    managerDeleteSubject = data;
-  });
-  jQuery.get('managerDeleteTask.html', function(data) {
-    managerDeleteTask = data;
-  });
+  // Set the html of the area to the html used after signing in
+  content.innerHTML = managerSigned;
+  // Request the subjects table upon signing in
+  RequestTable("subjects");
+  // Request the subject creation interface on sign in
+  Creator("subject");
 });
 
 // Socket listener for updates to tables
@@ -67,10 +74,6 @@ socket.on('as', function (data) {
 
 // Socket listener for a new table
 socket.on('nt', function (data) {
-  // Get creator content space and set it to a variable
-  var creatorSpace = document.getElementById("creator");
-  // Clear current creator space
-  creatorSpace.innerHTML = "";
   // Set the table title
   var tableTitle = document.getElementById('tableTitle');
   tableTitle.innerHTML = pageName;
@@ -127,14 +130,12 @@ var Capitalise = function (s)
 
 // Function to generate html for the create user interfaces
 var Creator = function (name) {
-  // Clear table html
-  document.getElementById("table").innerHTML = "";
   // Get creator content space and set it to a variable
-  var creatorSpace = document.getElementById("creator");
+  var creatorSpace = document.getElementById("controller");
   // Clear current creator space
   creatorSpace.innerHTML = "";
   // Set the title for the form
-  document.getElementById("tableTitle").innerHTML = "Create " + Capitalise(name);
+  document.getElementById("controllerTitle").innerHTML = "Create " + Capitalise(name);
   if (name == "subject") {
     // Load the html for the input form for subject creation
     creatorSpace.innerHTML = managerCreateSubject;
@@ -177,14 +178,12 @@ var Create = function (name) {
 
 var Deleter = function(name) {
   pageName = "Delete " + name;
-  // Clear table html
-  document.getElementById("table").innerHTML = "";
   // Get creator content space and set it to a variable
-  var creatorSpace = document.getElementById("creator");
+  var creatorSpace = document.getElementById("controller");
   // Clear current creator space
   creatorSpace.innerHTML = "";
   // Set the title for the form
-  document.getElementById("tableTitle").innerHTML = "Delete " + Capitalise(name);
+  document.getElementById("controllerTitle").innerHTML = "Delete " + Capitalise(name);
   if (name == "subject") {
     // Load the html for the input form for subject creation
     creatorSpace.innerHTML = managerDeleteSubject;
