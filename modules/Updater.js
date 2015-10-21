@@ -3,7 +3,7 @@
  */
 var MySQL = require('./MySQLHandler');
 
-var Creator = {
+var Updater = {
   AddSubject: function (socket, accountID, name) {
     // Insert or creator the mysql financial table
     MySQL.connection.query("INSERT INTO subjects (account_id, name) VALUES (?, ?) ", [accountID, name], function (err, results) {
@@ -73,4 +73,4 @@ var Creator = {
   }
 };
 
-module.exports = Creator;
+module.exports = Updater;

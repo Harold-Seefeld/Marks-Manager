@@ -1,5 +1,13 @@
 /*
- Class that handles all client connections and the connections between the database
+ Main class of the program:
+ - Sets the server properties (ip, port)
+ - Starts listening for requests on socket.io and http
+ - Serves all static files in the './public' directory
+ - Assigns the home, about and manager pages to certain locations on the server
+ - Handles registration
+ - Handles signing in
+ - Handles the requesting of tables (subjects, tasks) from the client
+ - Transfers the request for updating a table to the 'Updater' class
  */
 
 // Set up the protocols
@@ -7,9 +15,12 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+// Get all dependencies required to run the main class
 var mysql = require('./modules/MySQLHandler');
 var path = require('path');
-var creator = require("./modules/Updater");
+var socketEvents = require('./modules/SocketEvents');
+var creator = require('./modules/Updater');
 
 // Set port and ip variables for the server address, first trying to get values from the openshift host
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 80);
@@ -21,7 +32,7 @@ var sessions = {};
 // Allow socket.io connections to be made from the client, which in turn calls this function
 io.on('connection', function (socket) {
   // User attempts to sign in
-  socket.on('login', function (data) {
+  socket.on(socketEvents.Input.LOGIN, function (data) {
     var password = data.password;
     var username = data.username;
     // Check if input lengths are adequate for the password and the username
@@ -77,10 +88,10 @@ io.on('connection', function (socket) {
           if (error.stack.indexOf("username") > -1) {
             socket.emit("err", {error: 'Username already exists!'});
           } else {
-            socket.emit("err", {error: "error"});
+            throw error;
           }
         } else {
-          socket.emit("err", {error: "error"});
+          throw error;
         }
       }
       else {
