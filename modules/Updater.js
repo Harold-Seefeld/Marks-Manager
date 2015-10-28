@@ -2,17 +2,18 @@
  Class contains functions for inserting data into the MySQL server
  */
 var MySQL = require('./MySQLHandler');
+var events = require('./modules/SocketEvents');
 
 var Updater = {
   AddSubject: function (socket, accountID, name) {
-    // Insert or creator the mysql financial table
+    // Insert the subject into the database
     MySQL.connection.query("INSERT INTO subjects (account_id, name) VALUES (?, ?) ", [accountID, name], function (err, results) {
       if (err) {
         // Print out the error for further debugging (error is not expected unless there is something wrong with the database)
         console.log(err + err.stack);
       } else {
         // Update client
-        socket.emit("uv", {table: "subjects"});
+        socket.emit(socket.Output.UPDATED_VALUES, {table: "subjects"});
       }
     });
   },
@@ -28,7 +29,7 @@ var Updater = {
           console.log(err + err.stack);
         } else {
           // Update client
-          socket.emit("uv", {table: "tasks"});
+          socket.emit(socket.Output.UPDATED_VALUES, {table: "tasks"});
         }
       });
   },
@@ -46,7 +47,7 @@ var Updater = {
             console.log(err + err.stack);
           } else {
             // Emit to the client that the table has been updated
-            socket.emit("uv", {table: "subjects"});
+            socket.emit(socket.Output.UPDATED_VALUES, {table: "subjects"});
           }
         });
       }
@@ -63,10 +64,10 @@ var Updater = {
         } else {
           if (results.affectedRows != 1) {
             // No deletion occurred (task name must be missing), send that the task doesn't exist
-            socket.emit("err", {error: "The task and subject combination does not exist."});
+            socket.emit(events.Output.ERROR, {error: "The task and subject combination does not exist."});
           } else {
             // Emit to the client that the table has been updated
-            socket.emit("uv", {table: "tasks"});
+            socket.emit(socket.Output.UPDATED_VALUES, {table: "tasks"});
           }
         }
       });

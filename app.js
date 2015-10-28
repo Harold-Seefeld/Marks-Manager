@@ -19,7 +19,7 @@ var io = require('socket.io')(http);
 // Get all dependencies required to run the main class
 var mysql = require('./modules/MySQLHandler');
 var path = require('path');
-var socketEvents = require('./modules/SocketEvents');
+var events = require('./modules/SocketEvents');
 var creator = require('./modules/Updater');
 
 // Set port and ip variables for the server address, first trying to get values from the openshift host
@@ -32,12 +32,12 @@ var sessions = {};
 // Allow socket.io connections to be made from the client, which in turn calls this function
 io.on('connection', function (socket) {
   // User attempts to sign in
-  socket.on(socketEvents.Input.LOGIN, function (data) {
+  socket.on(events.Input.LOGIN, function (data) {
     var password = data.password;
     var username = data.username;
     // Check if input lengths are adequate for the password and the username
     if (!password || !username || password.length < 6 || password.length > 16 || username.length > 16 || username.length < 4) {
-      socket.emit("err", {error: "Invalid username or password."});
+      socket.emit(events.Output.ERROR, {error: "Invalid username or password."});
       // Don't execute any further statements if there are invalid values
       return;
     }
@@ -46,10 +46,10 @@ io.on('connection', function (socket) {
     // Get account with that information
     mysql.connection.query("SELECT * FROM accounts WHERE username = ?", [username], function (err, results) {
       if (err) {
-        socket.emit("err", {error: "Invalid username or password."});
+        socket.emit(events.Output.ERROR, {error: "Invalid username or password."});
       }
       else if (results.length > 0 && results[0].password != undefined && password == mysql.decrypt(results[0].password)) {
-        socket.emit("ls", {});
+        socket.emit(events.Output.LOGIN_SUCCEEDED, {});
         // Add session and account id to the tracking variable
         sessions[socket.id] = results[0].account_id;
         // Send users subjects
@@ -60,22 +60,22 @@ io.on('connection', function (socket) {
             subjects.push(results[i].name);
           }
           // Emit the subjects array to the client
-          socket.emit("as", subjects)
+          socket.emit(events.Output.ALL_SUBJECTS, subjects)
         });
       }
       else {
-        socket.emit("err", {error: "Invalid username or password."});
+        socket.emit(events.Output.ERROR, {error: "Invalid username or password."});
       }
     });
   });
 
   // User wants to register
-  socket.on('register', function (data) {
+  socket.on(events.Input.REGISTER, function (data) {
     var password = data.password;
     var username = data.username;
     // Check if lengths are adequate
     if (!password || !username || password.length < 6 || password.length > 16 || username.length > 16 || username.length < 4) {
-      socket.emit("err", {error: "Invalid values entered!"});
+      socket.emit(events.Output.ERROR, {error: "Invalid values entered!"});
       // Don't execute any further statements if there are invalid values
       return;
     }
@@ -86,7 +86,7 @@ io.on('connection', function (socket) {
       if (error) {
         if (error.stack) {
           if (error.stack.indexOf("username") > -1) {
-            socket.emit("err", {error: 'Username already exists!'});
+            socket.emit(events.Output.ERROR, {error: 'Username already exists!'});
           } else {
             throw error;
           }
@@ -95,7 +95,7 @@ io.on('connection', function (socket) {
         }
       }
       else {
-        socket.emit("rs", {});
+        socket.emit(events.Output.REGISTRATION_SUCCEEDED, {});
       }
     });
   });
@@ -109,7 +109,7 @@ io.on('connection', function (socket) {
   });
 
   // Event called when the client wants to load a table
-  socket.on('rt', function (data) {
+  socket.on(events.Input.REQUEST_TABLE, function (data) {
     // Check if the socket identifier has a client signed in with it
     if (!sessions.hasOwnProperty(socket.id)) {
       return;
@@ -128,7 +128,7 @@ io.on('connection', function (socket) {
       return;
     }
     // Emit table titles to the client
-    socket.emit("nt", dataToSend);
+    socket.emit(events.Output.NEW_TABLE, dataToSend);
     // Allow the name value to be retrieved later
     var getName = function () {
       return name;
@@ -154,7 +154,7 @@ io.on('connection', function (socket) {
             subjects.push(results[i].name);
           }
           // Emit the subjects array to the client
-          socket.emit("as", subjects);
+          socket.emit(events.Output.ALL_SUBJECTS, subjects);
           // Loop over all the found subjects for the account
           results.forEach(function(result) {
             // Set the task name
@@ -177,11 +177,11 @@ io.on('connection', function (socket) {
                 finalMark = Math.round(finalMark * 10) / 10;
                 // Add the values to the dataToSend array
                 dataToSend = [name, taskCount, finalMark, courseCompletion];
-                socket.emit("ne", dataToSend);
+                socket.emit(events.Output.NEW_TABLE_ENTRY, dataToSend);
               } else {
                 // No tasks under this subject so far, send 0 as values for the subject name
                 dataToSend = [name, 0, 0, 0];
-                socket.emit("ne", dataToSend);
+                socket.emit(events.Output.NEW_TABLE_ENTRY, dataToSend);
               }
             });
           });
@@ -194,7 +194,7 @@ io.on('connection', function (socket) {
             var weighting = result.weighting;
             // Add the values to the dataToSend array
             dataToSend = [subject, name, mark, weighting];
-            socket.emit("ne", dataToSend);
+            socket.emit(events.Output.NEW_TABLE_ENTRY, dataToSend);
           });
         }
       }
@@ -202,7 +202,7 @@ io.on('connection', function (socket) {
   });
 
   // User wants to create/delete tasks/subjects
-  socket.on('uv', function (data) {
+  socket.on(events.Input.UPDATE_VALUES, function (data) {
     // Check if the socket identifier has a client signed in with it
     if (!sessions.hasOwnProperty(socket.id)) {
       return;
