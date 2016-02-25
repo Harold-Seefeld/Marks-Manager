@@ -1,11 +1,5 @@
 <div class="form-group">
     <div class="form-group">
-        <label for="subjectSelector">Select subject:</label>
-        <select class="form-control" id="subjectSelector">
-        </select>
-    </div>
-
-    <div class="form-group">
         <label for="tName">
             Task name (1-50 Alphanumeric Characters)
         </label>
@@ -13,10 +7,17 @@
     </div>
 
     <div class="form-group">
-        <label for="tMark">
-            Mark (%)
+        <label for="tSubject">
+            Subject name (1-50 Alphanumeric Characters)
         </label>
-        <input type="number" class="form-control" id="tMark">
+        <input type="text" class="form-control" id="tSubject">
+    </div>
+
+    <div class="form-group">
+        <label for="datePicker">
+            Date due
+        </label>
+        <input type='text' class="form-control" id='datePicker' />
     </div>
 
     <div class="form-group">
@@ -26,7 +27,14 @@
         <input type="number" class="form-control" id="tWeighting">
     </div>
 
-    <button type="button" class="btn btn-default" onclick="Create('task')">
+    <div class="form-group">
+        <label for="tMark">
+            Mark (%, Optional)
+        </label>
+        <input type="number" class="form-control" id="tMark">
+    </div>
+
+    <button type="button" class="btn btn-default" onclick="Create()">
         Submit
     </button>
 </div>

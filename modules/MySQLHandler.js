@@ -24,7 +24,7 @@ var setup = function () {
       port: process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
       user: process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'manager',
       password: process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'password',
-      // Allow usage of multiple statements for using the database creator
+      // Allow usage of multiple statements for using the database updater
       multipleStatements: true
     }
   );

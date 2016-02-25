@@ -5,121 +5,131 @@
 // Create socket and connect
 var socket = io.connect();
 
-// Active table page
-var pageName = "";
+// Active table page (subjects by default)
+var viewPageName = "subjects";
+// Active manage page (create by default)
+var managePageName = "create";
 
 // Get and set main content area
 var content = document.getElementById('content');
 
+// Set socket events
+var events = {
+  Output: {
+    REQUEST_ASSESSMENTS: "ra",
+    LOGIN: "l",
+    REGISTER: "r",
+    UPDATE_VALUES: "uv"
+  },
+  Input: {
+    LOGIN_SUCCEEDED: "ls",
+    REGISTRATION_SUCCEEDED: "rs",
+    ERROR: "err",
+    UPDATED_VALUES: "uv",
+    ALL_TASKS: "at"
+  }
+};
+
 // Cache html string values for options accessible to the client
-var managerSigned = "";
-var managerCreateSubject = "";
-var managerCreateTask = "";
-var managerDeleteSubject = "";
-var managerDeleteTask = "";
+var managerSignedHTML = "";
+var managerCreateTaskHTML = "";
+var managerDeleteTaskHTML = "";
 
 // Store the html used for after signing in
 jQuery.get('resources/managerSigned.html', function(data) {
-  managerSigned = data;
+  managerSignedHTML = data;
 });
 
-// Store and download the other options
-jQuery.get('resources/managerCreateSubject.html', function(data) {
-  managerCreateSubject = data;
-});
+// Store and download the manage options
 jQuery.get('resources/managerCreateTask.html', function(data) {
-  managerCreateTask = data;
-});
-jQuery.get('resources/managerDeleteSubject.html', function(data) {
-  managerDeleteSubject = data;
+  managerCreateTaskHTML = data;
 });
 jQuery.get('resources/managerDeleteTask.html', function(data) {
-  managerDeleteTask = data;
+  managerDeleteTaskHTML = data;
 });
 
+// Assessment tasks that belong to the current client
+var assessments = [];
 // Subjects that belong to the current client
 var subjects = [];
 
 // Socket listener for errors
-socket.on('err', function (data) {
+socket.on(events.Input.ERROR, function (data) {
   alert(data.error);
 });
 
 // Socket listener for registering
-socket.on('rs', function (data) {
+socket.on(events.Input.REGISTRATION_SUCCEEDED, function (data) {
   alert("You have successfully registered.");
 });
 
 // Socket listener for signing in
-socket.on('ls', function (data) {
+socket.on(events.Input.LOGIN_SUCCEEDED, function (data) {
   // Set the html of the area to the html used after signing in
-  content.innerHTML = managerSigned;
+  content.innerHTML = managerSignedHTML;
   // Request the subjects table upon signing in
-  RequestTable("subjects");
-  // Request the subject creation interface on sign in
-  Creator("subject");
+  RequestAssessments();
+  //Create the subject creation interface on sign in
+  Creator();
 });
 
 // Socket listener for updates to tables
-socket.on('uv', function (data) {
+socket.on(events.Input.UPDATED_VALUES, function (data) {
   // Request the updated table
-  RequestTable(data.table);
+  RequestAssessments();
   alert("Table updated successfully.");
 });
 
 // Socket listener for getting all available subjects
-socket.on('as', function (data) {
-  subjects = data;
-});
-
-// Socket listener for a new table
-socket.on('nt', function (data) {
-  // Set the table title
-  var tableTitle = document.getElementById('tableTitle');
-  tableTitle.innerHTML = pageName;
-  // Create the table headers
-  var html = "<thead><tr>";
-  for (var i = 0; i < data.titles.length; i++) {
-    html += "<th>" + data.titles[i] + "</th>";
+socket.on(events.Input.ALL_TASKS, function (data) {
+  assessments = data;
+  // Set subjects
+  subjects = [];
+  assessments.forEach(function(assessment) {
+    if (subjects.indexOf(assessment.subject) == -1) {
+      subjects.push(assessment.subject);
+    }
+  });
+  ViewOption(viewPageName);
+  // Update the manage section
+  if (managePageName == "create") {
+    Creator();
+  } else {
+    Deleter();
   }
-  html += "</tr></thead>";
-  // Get the table and set the contents of it to the html
-  var table = document.getElementById('table');
-  table.innerHTML = html;
-});
-
-// Socket listener for a new entry in a table
-socket.on('ne', function (data) {
-  // Fill the table with the new values
-  var html = "";
-  for (var i = 0; i < data.length; i++) {
-      html += "<th>" + data[i] + "</th>";
-  }
-  // Get the table and set the contents of it to the html
-  var table = document.getElementById('table');
-  table.innerHTML += html;
 });
 
 // Emits the registration details to the server
 var Register = function () {
   var data = {username: document.getElementById("rUsername").value, password: document.getElementById("rPassword").value};
-  socket.emit('register', data);
+  socket.emit(events.Output.REGISTER, data);
 };
 
 // Emits the login details to the server
 var SignIn = function () {
   var data = {username: document.getElementById("sUsername").value, password: document.getElementById("sPassword").value};
-  socket.emit('login', data);
+  socket.emit(events.Output.LOGIN, data);
 };
 
 // Function to request a table
-var RequestTable = function (name) {
-  if (pageName == Capitalise(name)) {
-    // Don't request the same table twice to decrease server load
-    return;
+var RequestAssessments = function () {
+  socket.emit(events.Output.REQUEST_ASSESSMENTS);
+};
+
+// Creates the headers for a new table
+var ShowTable = function (data) {
+  // Set the table title
+  var tableTitle = document.getElementById('tableTitle');
+  tableTitle.innerHTML = Capitalise(viewPageName);
+  // Create the table headers
+  var html = "<thead><tr>";
+  for (var i = 0; i < data.length; i++) {
+    html += "<th>" + data[i] + "</th>";
   }
-  socket.emit('rt', {name: name});
-  pageName = Capitalise(name);
+  html += "</tr></thead>";
+  // Get the table and set the contents of it to the html
+  var table = document.getElementById('table');
+  table.innerHTML = html;
 };
 
 // Function to Capitalise strings
@@ -128,100 +138,145 @@ var Capitalise = function (s)
   return s[0].toUpperCase() + s.slice(1);
 };
 
-// Function to generate html for the create user interfaces
-var Creator = function (name) {
-  // Get creator content space and set it to a variable
+var ViewOption = function(name) {
+  viewPageName = name;
+  if (name == "subjects") {
+    ShowTable(["Name", "Number of Tasks", "Final Mark (%)", "Course Completion (%)"]);
+    // Loop over all the found subjects
+    subjects.forEach(function(subject) {
+      // Tasks is used for tracking all assessments within a given subject
+      var tasks = [];
+      for (var i = 0; i < assessments.length; i++) {
+        if (assessments[i].subject == subject) {
+          tasks.push(assessments[i]);
+        }
+      }
+      // Set the subject name
+      var name = subject;
+      // Get the count of tasks for the subject
+      var taskCount = tasks.length;
+      // Get course completion percentage by adding up all of the weightings of the tasks for the subject
+      var courseCompletion = 0;
+      for (var n = 0; n < tasks.length; n++) {
+        courseCompletion += tasks[n].weighting;
+      }
+      // Get final mark by adding the mark divided by the weighting divided by course completion
+      var finalMark = 0;
+      for (var n = 0; n < tasks.length; n++) {
+        finalMark += tasks[n].mark * (tasks[n].weighting / courseCompletion);
+      }
+      // Round final mark to 1 decimal place
+      finalMark = Math.round(finalMark * 10) / 10;
+      // Add the values to the dataToSend array
+      NewEntry([name, taskCount, finalMark, courseCompletion]);
+    });
+  }
+  else if (name == "tasks") {
+    ShowTable(["Subject", "Name", "Mark (%)", "Weighting (%)", "Date Due"]);
+    // Loop over all the found tasks
+    assessments.forEach(function(result) {
+      var subject = result.subject;
+      var name = result.name;
+      var mark = result.mark;
+      var weighting = result.weighting;
+      var dateDue = moment(result.dateDue).format("YYYY-MM-DD HH:mm");
+      // Add an entry to the table being displayed
+      NewEntry([subject, name, mark, weighting, dateDue]);
+    });
+  }
+  else if (name == "calendar") {
+    $("table").calendar({events_source: [
+      {
+        "id": 293,
+        "title": "Event 1",
+        "url": "http://example.com",
+        "class": "event-important",
+        "start": 12039485678000, // Milliseconds
+        "end": 1234576967000 // Milliseconds
+      },
+    ]});
+  }
+};
+
+// Function to show html for the create task interface
+var Creator = function () {
+  managePageName = "create";
+  // Get updater content space and set it to a variable
   var creatorSpace = document.getElementById("controller");
-  // Clear current creator space
-  creatorSpace.innerHTML = "";
   // Set the title for the form
-  document.getElementById("controllerTitle").innerHTML = "Create " + Capitalise(name);
-  if (name == "subject") {
-    // Load the html for the input form for subject creation
-    creatorSpace.innerHTML = managerCreateSubject;
-  }
-  else if (name == "task") {
-    // Load the html for the input form for task creation
-    creatorSpace.innerHTML = managerCreateTask;
-    // Get the combobox for the subjects and fill it
-    var selector = document.getElementById("subjectSelector");
-    for (var i = 0; i < subjects.length; i++) {
-      selector.innerHTML += "<option>" + subjects[i] + "</option>";
-    }
-    // If there are no subjects available, indicate that one needs to be created
-    if (selector.innerHTML.length < 15) {
-      alert("Please create a new subject first, no subjects currently exist.");
-      // Redirect the user to the subject creation screen
-      Creator("subject");
-    }
-  }
+  document.getElementById("controllerTitle").innerHTML = "Create Assessment";
+  // Show the html for the input form for task creation
+  creatorSpace.innerHTML = managerCreateTaskHTML;
+  // Allow the date picker to be interacted with
+  $('#datePicker').datetimepicker();
 };
 
-// Function called when a button is submitted from the creator user interfaces
-var Create = function (name) {
-  pageName = "Create " + name;
+// Function called when the create button is submitted from the updater user interfaces
+var Create = function () {
   var data = {};
-  if (name == "subject") {
-    data.type = "c_subject";
-    data.name = $("#subjectName").val();
-    socket.emit("uv", data);
-  }
-  else if (name == "task") {
-    data.type = "c_task";
-    data.subject = $("#subjectSelector").val();
-    data.name = $("#tName").val();
-    data.mark = $("#tMark").val();
-    data.weighting = $("#tWeighting").val();
-    socket.emit("uv", data);
-  }
+  data.type = "c_task";
+  data.subject = $("#tSubject").val();
+  data.name = $("#tName").val();
+  data.mark = $("#tMark").val();
+  data.weighting = $("#tWeighting").val();
+  data.dateDue = $("#datePicker").val();
+  socket.emit("uv", data);
 };
 
-var Deleter = function(name) {
-  pageName = "Delete " + name;
-  // Get creator content space and set it to a variable
+// Shows html for the delete task interface
+var Deleter = function() {
+  managePageName = "delete";
+  // Get updater content space and set it to a variable
   var creatorSpace = document.getElementById("controller");
-  // Clear current creator space
-  creatorSpace.innerHTML = "";
   // Set the title for the form
-  document.getElementById("controllerTitle").innerHTML = "Delete " + Capitalise(name);
-  if (name == "subject") {
-    // Load the html for the input form for subject creation
-    creatorSpace.innerHTML = managerDeleteSubject;
-    // Show available subjects that can be deleted in a combobox
-    var selector = document.getElementById("subjectSelector");
-    for (var i = 0; i < subjects.length; i++) {
-      selector.innerHTML += "<option>" + subjects[i] + "</option>";
-    }
+  document.getElementById("controllerTitle").innerHTML = "Delete Assessment";
+  // Show the html for the input form for task deletion
+  creatorSpace.innerHTML = managerDeleteTaskHTML;
+  // Fill the subject selection panel
+  var html = "";
+  for (var i = 0; i < subjects.length; i++) {
+    html += "<option value='" + subjects[i] + "'>" + subjects[i] + "</option>";
   }
-  else if (name == "task") {
-    // Load the html for the input form for task creation
-    creatorSpace.innerHTML = managerDeleteTask;
-    // Get the combobox for the subjects and fill it
-    var selector = document.getElementById("subjectSelector");
-    for (var i = 0; i < subjects.length; i++) {
-      selector.innerHTML += "<option>" + subjects[i] + "</option>";
-    }
-    // If there are no subjects available, indicate that one needs to be created
-    if (selector.innerHTML.length < 15) {
-      alert("Please create a new subject first, no subjects currently exist.");
-      // Redirect the user to the subject creation screen
-      Creator("subject");
-    }
-  }
+  // Get the table and set the contents of it to the html
+  var subjectSelector = document.getElementById('subjectSelector');
+  subjectSelector.innerHTML = html;
+  // Update the task selector field
+  UpdateTaskSelector();
 };
 
-// Function called when a button is submitted from the deleter user interfaces
-var Delete = function (name) {
+// Update the task selector on the delete menu
+var UpdateTaskSelector = function () {
+  // Get the selected subject
+  var subjectSelected = $('#subjectSelector').val();
+  // Fill the task selection panel
+  var html = "";
+  for (var i = 0; i < assessments.length; i++) {
+    if (subjectSelected == assessments[i].subject) {
+      html += "<option value='" + assessments[i].name + "'>" + assessments[i].name + "</option>";
+    }
+  }
+  // Get the table and set the contents of it to the html
+  var taskSelector = document.getElementById('taskSelector');
+  taskSelector.innerHTML = html;
+};
+
+// Called when a button is submitted from the delete interface
+var Delete = function () {
   var data = {};
-  if (name == "subject") {
-    data.type = "d_subject";
-    data.name = $("#subjectSelector").val();
-    socket.emit("uv", data);
+  data.type = "d_task";
+  data.subject = $("#subjectSelector").val();
+  data.name = $("#taskSelector").val();
+  socket.emit("uv", data);
+};
+
+// Puts in a row into a table
+var NewEntry = function (data) {
+  // Create table row html using the values
+  var html = "";
+  for (var i = 0; i < data.length; i++) {
+    html += "<th>" + data[i] + "</th>";
   }
-  else if (name == "task") {
-    data.type = "d_task";
-    data.subject = $("#subjectSelector").val();
-    data.name = $("#tName").val();
-    socket.emit("uv", data);
-  }
+  // Get the table and set the contents of it to the html
+  var table = document.getElementById('table');
+  table.innerHTML += html;
 };

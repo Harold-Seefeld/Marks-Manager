@@ -17,6 +17,7 @@
     "mysql" : "*",
     "node-uuid":"~1.4.2",
     "crypto":"*",
+    "moment" : "*",
     "path":"*"
   }
 }

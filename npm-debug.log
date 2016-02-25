@@ -1,0 +1,135 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'update' ]
+2 info using npm@2.14.7
+3 info using node@v4.2.2
+4 silly mapToRegistry name express
+5 silly mapToRegistry using default registry
+6 silly mapToRegistry registry https://registry.npmjs.org/
+7 silly mapToRegistry uri https://registry.npmjs.org/express
+8 silly mapToRegistry name body-parser
+9 silly mapToRegistry using default registry
+10 silly mapToRegistry registry https://registry.npmjs.org/
+11 silly mapToRegistry uri https://registry.npmjs.org/body-parser
+12 silly mapToRegistry name socket.io
+13 silly mapToRegistry using default registry
+14 silly mapToRegistry registry https://registry.npmjs.org/
+15 silly mapToRegistry uri https://registry.npmjs.org/socket.io
+16 silly mapToRegistry name mysql
+17 silly mapToRegistry using default registry
+18 silly mapToRegistry registry https://registry.npmjs.org/
+19 silly mapToRegistry uri https://registry.npmjs.org/mysql
+20 silly mapToRegistry name node-uuid
+21 silly mapToRegistry using default registry
+22 silly mapToRegistry registry https://registry.npmjs.org/
+23 silly mapToRegistry uri https://registry.npmjs.org/node-uuid
+24 silly mapToRegistry name crypto
+25 silly mapToRegistry using default registry
+26 silly mapToRegistry registry https://registry.npmjs.org/
+27 silly mapToRegistry uri https://registry.npmjs.org/crypto
+28 silly mapToRegistry name moment
+29 silly mapToRegistry using default registry
+30 silly mapToRegistry registry https://registry.npmjs.org/
+31 silly mapToRegistry uri https://registry.npmjs.org/moment
+32 silly mapToRegistry name path
+33 silly mapToRegistry using default registry
+34 silly mapToRegistry registry https://registry.npmjs.org/
+35 silly mapToRegistry uri https://registry.npmjs.org/path
+36 verbose request uri https://registry.npmjs.org/express
+37 verbose request no auth needed
+38 info attempt registry request try #1 at 2:25:56 PM
+39 verbose request id 41b6dc46b3bd8e42
+40 http request GET https://registry.npmjs.org/express
+41 verbose request uri https://registry.npmjs.org/body-parser
+42 verbose request no auth needed
+43 info attempt registry request try #1 at 2:25:56 PM
+44 http request GET https://registry.npmjs.org/body-parser
+45 verbose request uri https://registry.npmjs.org/socket.io
+46 verbose request no auth needed
+47 info attempt registry request try #1 at 2:25:56 PM
+48 http request GET https://registry.npmjs.org/socket.io
+49 verbose request uri https://registry.npmjs.org/mysql
+50 verbose request no auth needed
+51 info attempt registry request try #1 at 2:25:56 PM
+52 http request GET https://registry.npmjs.org/mysql
+53 verbose request uri https://registry.npmjs.org/node-uuid
+54 verbose request no auth needed
+55 info attempt registry request try #1 at 2:25:56 PM
+56 http request GET https://registry.npmjs.org/node-uuid
+57 verbose request uri https://registry.npmjs.org/crypto
+58 verbose request no auth needed
+59 info attempt registry request try #1 at 2:25:56 PM
+60 http request GET https://registry.npmjs.org/crypto
+61 verbose request uri https://registry.npmjs.org/moment
+62 verbose request no auth needed
+63 info attempt registry request try #1 at 2:25:56 PM
+64 http request GET https://registry.npmjs.org/moment
+65 verbose request uri https://registry.npmjs.org/path
+66 verbose request no auth needed
+67 info attempt registry request try #1 at 2:25:56 PM
+68 http request GET https://registry.npmjs.org/path
+69 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+70 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+71 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+72 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+73 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+74 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+75 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+76 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+77 info attempt registry request try #2 at 2:26:08 PM
+78 http request GET https://registry.npmjs.org/path
+79 info attempt registry request try #2 at 2:26:08 PM
+80 http request GET https://registry.npmjs.org/socket.io
+81 info attempt registry request try #2 at 2:26:08 PM
+82 http request GET https://registry.npmjs.org/node-uuid
+83 info attempt registry request try #2 at 2:26:08 PM
+84 http request GET https://registry.npmjs.org/express
+85 info attempt registry request try #2 at 2:26:08 PM
+86 http request GET https://registry.npmjs.org/mysql
+87 info attempt registry request try #2 at 2:26:08 PM
+88 http request GET https://registry.npmjs.org/moment
+89 info attempt registry request try #2 at 2:26:08 PM
+90 http request GET https://registry.npmjs.org/body-parser
+91 info attempt registry request try #2 at 2:26:08 PM
+92 http request GET https://registry.npmjs.org/crypto
+93 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+94 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+95 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+96 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+97 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+98 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+99 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+100 info retry will retry, error on last attempt: Error: self signed certificate in certificate chain
+101 info attempt registry request try #3 at 2:27:09 PM
+102 http request GET https://registry.npmjs.org/path
+103 info attempt registry request try #3 at 2:27:09 PM
+104 http request GET https://registry.npmjs.org/mysql
+105 info attempt registry request try #3 at 2:27:09 PM
+106 http request GET https://registry.npmjs.org/express
+107 info attempt registry request try #3 at 2:27:09 PM
+108 http request GET https://registry.npmjs.org/node-uuid
+109 info attempt registry request try #3 at 2:27:09 PM
+110 http request GET https://registry.npmjs.org/socket.io
+111 info attempt registry request try #3 at 2:27:09 PM
+112 http request GET https://registry.npmjs.org/moment
+113 info attempt registry request try #3 at 2:27:09 PM
+114 http request GET https://registry.npmjs.org/crypto
+115 info attempt registry request try #3 at 2:27:09 PM
+116 http request GET https://registry.npmjs.org/body-parser
+117 verbose stack Error: self signed certificate in certificate chain
+117 verbose stack     at Error (native)
+117 verbose stack     at TLSSocket.<anonymous> (_tls_wrap.js:1003:38)
+117 verbose stack     at emitNone (events.js:67:13)
+117 verbose stack     at TLSSocket.emit (events.js:166:7)
+117 verbose stack     at TLSSocket._finishInit (_tls_wrap.js:570:8)
+118 verbose cwd C:\Users\Harold\OneDrive\Documents\Mark Manager
+119 error Windows_NT 10.0.10240
+120 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "update"
+121 error node v4.2.2
+122 error npm  v2.14.7
+123 error code SELF_SIGNED_CERT_IN_CHAIN
+124 error self signed certificate in certificate chain
+125 error If you need help, you may report this error at:
+125 error     <https://github.com/npm/npm/issues>
+126 verbose exit [ 1, true ]
