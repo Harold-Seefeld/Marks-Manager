@@ -155,11 +155,9 @@ io.on('connection', function (socket) {
       if (!(data.dateDue && data.weighting)) {
         return;
       }
-      // Add the task passing the subject, name, mark and weighting
       updater.AddTask(socket, account, data.subject.toString().trim(), data.name.toString().trim(), data.mark, data.dateDue, data.weighting);
     }
     else if (type == "d_task") {
-      // Delete the task from the task table
       updater.DeleteTask(socket, account, data.subject.toString().trim(), data.name.toString().trim());
     }
   });

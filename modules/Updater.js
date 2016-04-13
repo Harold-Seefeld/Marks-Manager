@@ -11,12 +11,16 @@ var Updater = {
     mark = Math.round(mark * 10) / 10;
     weighting = Math.round(weighting * 10) / 10;
     // Parse dateDue
-    dateDue = moment(dateDue, "YYYY-MM-DD HH:mm:ss", true);
+    dateDue = moment(dateDue, "DD/MM/YYYY");
     if (!dateDue.isValid()) {
       return;
     }
-    // Insert or updater the mysql financial table
-    MySQL.connection.query("INSERT INTO tasks (account_id, subject, name, mark, date_due, weighting) VALUES (?, ?, ?, ?, ?, ?) ",
+    // valueOf() gets the number of milliseconds since the Unix Epoch
+    dateDue = moment(dateDue).valueOf();
+    // unix() gets the unix timestamp
+    dateDue = moment(dateDue).unix();
+    // Insert the new assessment into the database
+    MySQL.connection.query("INSERT INTO tasks (account_id, subject, name, mark, date_due, weighting) VALUES (?, ?, ?, ?, ?, ?)",
       [accountID, subject, name, mark, dateDue, weighting], function (err, results) {
         if (err) {
           // Print out the error for further debugging (error is not expected unless there is something wrong with the database)

@@ -140,6 +140,8 @@ var Capitalise = function (s)
 
 var ViewOption = function(name) {
   viewPageName = name;
+  // Remove any active instance of the calendar
+  var calendar = $("#calendar").html("");
   if (name == "subjects") {
     ShowTable(["Name", "Number of Tasks", "Final Mark (%)", "Course Completion (%)"]);
     // Loop over all the found subjects
@@ -179,22 +181,20 @@ var ViewOption = function(name) {
       var name = result.name;
       var mark = result.mark;
       var weighting = result.weighting;
-      var dateDue = moment(result.dateDue).format("YYYY-MM-DD HH:mm");
+      var dateDue = moment.unix(result.dateDue).format("DD/MM/YYYY");
       // Add an entry to the table being displayed
       NewEntry([subject, name, mark, weighting, dateDue]);
     });
   }
   else if (name == "calendar") {
-    $("table").calendar({events_source: [
-      {
-        "id": 293,
-        "title": "Event 1",
-        "url": "http://example.com",
-        "class": "event-important",
-        "start": 12039485678000, // Milliseconds
-        "end": 1234576967000 // Milliseconds
-      },
-    ]});
+    $("#tableTitle").html("Calendar");
+    $("#table").html("");
+    // Display the calendar
+    $("#calendar").monthly({
+      stylePast: true,
+      mode: 'event',
+      xmlString: GenerateMonthyAssessmentXML()
+    });
   }
 };
 
@@ -208,7 +208,9 @@ var Creator = function () {
   // Show the html for the input form for task creation
   creatorSpace.innerHTML = managerCreateTaskHTML;
   // Allow the date picker to be interacted with
-  $('#datePicker').datetimepicker();
+  $('#datePicker').datetimepicker({
+    format: "DD/MM/YYYY"
+  });
 };
 
 // Function called when the create button is submitted from the updater user interfaces
@@ -279,4 +281,21 @@ var NewEntry = function (data) {
   // Get the table and set the contents of it to the html
   var table = document.getElementById('table');
   table.innerHTML += html;
+};
+
+var GenerateMonthyAssessmentXML = function() {
+  var xml = "<?xml version=\"1.0\"?><monthly>";
+  for (var i = 0; i < assessments.length; i++) {
+    var assessment = assessments[i];
+    xml += "<event>";
+    // Add ID
+    xml += "<id>" + i + "</id>";
+    // Add name
+    xml += "<name>" + assessment.subject + ": " + assessment.name + "</name>";
+    // Add date the assessment is due
+    xml += "<startdate>" + moment.unix(assessment.dateDue).format("YYYY-M-DD") + "</startdate>";
+    xml += "</event>";
+  }
+  xml += "</monthly>";
+  return xml;
 };

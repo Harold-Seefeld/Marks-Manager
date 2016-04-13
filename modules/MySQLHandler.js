@@ -7,7 +7,6 @@ var mysql = require('mysql');
 
 // Use filesystem and path for loading the sql for database generation
 var fs = require("fs");
-var path = require("path");
 
 // Cryptography settings
 var crypto = require('crypto'),
