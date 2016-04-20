@@ -143,7 +143,8 @@ var ViewOption = function(name) {
   // Remove any active instance of the calendar
   var calendar = $("#calendar").html("");
   if (name == "subjects") {
-    ShowTable(["Name", "Number of Tasks", "Final Mark (%)", "Course Completion (%)"]);
+		$("#viewHelp").html("A summary of your performance in your subjects.");
+    ShowTable(["Name", "Number of Tasks", "Average Mark (%)", "Weighting Completion (%)"]);
     // Loop over all the found subjects
     subjects.forEach(function(subject) {
       // Tasks is used for tracking all assessments within a given subject
@@ -174,6 +175,7 @@ var ViewOption = function(name) {
     });
   }
   else if (name == "tasks") {
+		$("#viewHelp").html("Details of all of your assessments, sorted alphabetically in order of subject then name.");
     ShowTable(["Subject", "Name", "Mark (%)", "Weighting (%)", "Date Due"]);
     // Loop over all the found tasks
     assessments.forEach(function(result) {
@@ -187,13 +189,14 @@ var ViewOption = function(name) {
     });
   }
   else if (name == "calendar") {
+		$("#viewHelp").html("All of your assessments plotted onto a calendar.");
     $("#tableTitle").html("Calendar");
     $("#table").html("");
     // Display the calendar
     $("#calendar").monthly({
       stylePast: true,
       mode: 'event',
-      xmlString: GenerateMonthyAssessmentXML()
+      xmlString: GenerateMonthlyAssessmentXML()
     });
   }
 };
@@ -283,7 +286,7 @@ var NewEntry = function (data) {
   table.innerHTML += html;
 };
 
-var GenerateMonthyAssessmentXML = function() {
+var GenerateMonthlyAssessmentXML = function() {
   var xml = "<?xml version=\"1.0\"?><monthly>";
   for (var i = 0; i < assessments.length; i++) {
     var assessment = assessments[i];
