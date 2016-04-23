@@ -164,7 +164,7 @@ io.on('connection', function (socket) {
 });
 
 // Allow everything in the ./public directory to be viewed by clients
-app.use(express.static((process.env.OPENSHIFT_REPO_DIR || __dirname)'public'));
+app.use(express.static((process.env.OPENSHIFT_REPO_DIR || __dirname) + '/public'));
 
 // Use manager.html as the homepage
 app.get('/', function (req, res) {
