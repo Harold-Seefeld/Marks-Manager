@@ -165,7 +165,6 @@ io.on('connection', function (socket) {
 
 // Allow everything in the ./public directory to be viewed by clients
 app.use(express.static('public'));
-app.use('/resources' + express.static(__dirname + '/resources'));
 
 // Use manager.html as the homepage
 app.get('/', function (req, res) {
