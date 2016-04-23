@@ -1,21 +1,29 @@
 <div class="form-group">
     <div class="form-group">
         <label for="tName">
-            Task name (1-50 Alphanumeric Characters)
+            Task Name
         </label>
-        <input type="text" class="form-control" id="tName">
+        <div class="action-tip" onclick="">
+            <p>Name of the assessment task.
+                It must be between 1 and 50 characters long.</p>
+        </div>
+        <input type="text" class="form-control" id="tName" maxlength="50">
     </div>
 
     <div class="form-group">
         <label for="tSubject">
-            Subject name (1-50 Alphanumeric Characters)
+            Subject Name
         </label>
-        <input type="text" class="form-control" id="tSubject">
+        <div class="action-tip" onclick="">
+            <p>Name of the subject of the assessment task.
+                It must be between 1 and 50 characters long.</p>
+        </div>
+        <input type="text" class="form-control" id="tSubject" maxlength="50">
     </div>
 
     <div class="form-group">
         <label for="datePicker">
-            Date due
+            Date Due
         </label>
         <input type='text' class="form-control" id='datePicker' />
     </div>

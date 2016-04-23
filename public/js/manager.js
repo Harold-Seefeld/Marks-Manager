@@ -4,6 +4,7 @@
 
 // Create socket and connect
 var socket = io.connect();
+//var socket = io.connect("ws://marksmanager-eluate.rhcloud.com:8000"); // Use when hosting on OpenShift
 
 // Active table page (subjects by default)
 var viewPageName = "subjects";
@@ -144,7 +145,7 @@ var ViewOption = function(name) {
   var calendar = $("#calendar").html("");
   if (name == "subjects") {
 		$("#viewHelp").html("A summary of your performance in your subjects.");
-    ShowTable(["Name", "Number of Tasks", "Average Mark (%)", "Weighting Completion (%)"]);
+    ShowTable(["Name", "Count", "Weighted Mark (%)", "Weighting Completion (%)"]);
     // Loop over all the found subjects
     subjects.forEach(function(subject) {
       // Tasks is used for tracking all assessments within a given subject
