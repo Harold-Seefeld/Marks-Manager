@@ -3,8 +3,8 @@
  */
 
 // Create socket and connect
-var socket = io.connect();
-//var socket = io.connect("ws://marksmanager-eluate.rhcloud.com:8000"); // Use when hosting on OpenShift
+//var socket = io.connect();
+var socket = io.connect("ws://marksmanager-eluate.rhcloud.com:8000"); // Use when hosting on OpenShift
 
 // Active table page (subjects by default)
 var viewPageName = "subjects";
