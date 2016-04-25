@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `manager`.`tasks` (
   `name` VARCHAR(50) NULL DEFAULT NULL,
   `mark` INT(11) NULL DEFAULT NULL,
   `weighting` INT(11) NULL DEFAULT NULL,
-  `date_due` DATETIME NULL DEFAULT NULL,
+  `date_due` INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (`task_id`),
   UNIQUE INDEX `UQ_ASN` (`account_id` ASC, `subject` ASC, `name` ASC))
 ENGINE = InnoDB
