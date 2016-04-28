@@ -7,8 +7,12 @@ var moment = require('moment');
 
 var Updater = {
   AddTask: function (socket, accountID, subject, name, mark, dateDue, weighting) {
-    // Round the mark and the weighting to one decimal place
-    mark = Math.round(mark * 10) / 10;
+    // Round the mark and the weighting to one decimal place'
+		if (mark) {
+			mark = Math.round(mark * 10) / 10;
+		} else {
+			mark = -1;
+		}
     weighting = Math.round(weighting * 10) / 10;
     // Parse dateDue
     dateDue = moment(dateDue, "DD/MM/YYYY");

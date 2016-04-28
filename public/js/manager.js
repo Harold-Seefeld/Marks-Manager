@@ -150,15 +150,20 @@ var ViewOption = function(name) {
     subjects.forEach(function(subject) {
       // Tasks is used for tracking all assessments within a given subject
       var tasks = [];
+			var deletedCount = 0;
       for (var i = 0; i < assessments.length; i++) {
         if (assessments[i].subject == subject) {
-          tasks.push(assessments[i]);
+					if (assessments[i].mark != -1) {
+						tasks.push(assessments[i]);
+					} else {
+						deletedCount++;
+					}
         }
       }
       // Set the subject name
       var name = subject;
       // Get the count of tasks for the subject
-      var taskCount = tasks.length;
+      var taskCount = tasks.length + deletedCount;
       // Get course completion percentage by adding up all of the weightings of the tasks for the subject
       var courseCompletion = 0;
       for (var n = 0; n < tasks.length; n++) {

@@ -25,21 +25,21 @@
         <label for="datePicker">
             Date Due
         </label>
-        <input type='text' class="form-control" id='datePicker' />
+        <input type='text' class="form-control" id='datePicker'>
     </div>
 
     <div class="form-group">
         <label for="tWeighting">
             Weighting (%)
         </label>
-        <input type="number" class="form-control" id="tWeighting">
+        <input type="number" min="0" max="100" class="form-control" id="tWeighting">
     </div>
 
     <div class="form-group">
         <label for="tMark">
             Mark (%, Optional)
         </label>
-        <input type="number" class="form-control" id="tMark">
+        <input type="number" min="0" max="100" class="form-control" id="tMark">
     </div>
 
     <button type="button" class="btn btn-default" onclick="Create()">
