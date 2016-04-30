@@ -78,8 +78,10 @@ io.on('connection', function (socket) {
   socket.on(events.Input.REGISTER, function (data) {
     var password = data.password;
     var username = data.username;
+		var alphanumericRegex = new RegExp("^[a-zA-Z0-9]+$");
     // Check if lengths are adequate
-    if (!password || !username || password.length < 6 || password.length > 16 || username.length > 16 || username.length < 4) {
+    if (!password || !username || password.length < 6 || password.length > 16 || username.length > 16 || username.length < 4 ||
+				!username.match(alphanumericRegex)) {
       socket.emit(events.Output.ERROR, {error: "Invalid values entered!"});
       // Don't execute any further statements if there are invalid values
       return;
